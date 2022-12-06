@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+  parser:
+    restart: always
+    env_file: .env
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - "../data/parser:/home/app/logs"
