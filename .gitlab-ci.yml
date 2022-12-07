@@ -1,0 +1,46 @@
+stages:
+  - build
+  - deploy
+
+dev_image-build:
+  only:
+   - develop
+  stage: build
+  tags:
+    - builder-aws
+  script:
+    - aws ecr get-login-password --region eu-central-1 | buildah login --username AWS --password-stdin 895812715899.dkr.ecr.eu-central-1.amazonaws.com
+    - echo
+
+prod_image-build:
+  only:
+   - prod
+  stage: build
+  tags:
+    - builder-aws
+  script:
+    - aws ecr get-login-password --region eu-central-1 | buildah login --username AWS --password-stdin 895812715899.dkr.ecr.eu-central-1.amazonaws.com
+
+
+
+dev_deploy:
+   only:
+     - develop
+   stage: deploy
+   tags:
+     - dev
+   script:
+     - aws ecr get-login-password --region eu-central-1 | sudo docker login --username AWS --password-stdin 895812715899.dkr.ecr.eu-central-1.amazonaws.com
+     - sudo docker stop Front && sudo docker rm Front
+     - sudo docker run --name Front -p 3000:80 -d 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-frontend-v2:$CI_COMMIT_BRANCH$CI_PIPELINE_IID
+
+prod_deploy:
+   only:
+     - prod
+   stage: deploy
+   tags:
+     - master
+   script:
+     - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 895812715899.dkr.ecr.eu-central-1.amazonaws.
+
+
