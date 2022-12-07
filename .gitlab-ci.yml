@@ -32,7 +32,7 @@ dev_deploy:
    script:
      - aws ecr get-login-password --region eu-central-1 | sudo docker login --username AWS --password-stdin 895812715899.dkr.ecr.eu-central-1.amazonaws.com
      - sudo docker stop Front && sudo docker rm Front
-     - sudo docker run --name Front -p 3000:80 -d 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-frontend-v2:$CI_COMMIT_BRANCH$CI_PIPELINE_IID
+     
 
 prod_deploy:
    only:
