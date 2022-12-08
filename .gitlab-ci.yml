@@ -1,0 +1,49 @@
+stages:
+  - build
+  - deploy
+
+dev_image-build:
+  only:
+   - develop
+  stage: build
+  tags:
+    - builder
+  script:
+    - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 895812715899.dkr.ecr.eu-central-1.amazonaws.com
+    - docker build -t 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:$CI_COMMIT_BRANCH$CI_PIPELINE_IID .
+    - docker push 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:$CI_COMMIT_BRANCH$CI_PIPELINE_IID
+
+prod_image-build:
+  only:
+   - master
+  stage: build
+  tags:
+    - builder
+  script:
+    - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 895812715899.dkr.ecr.eu-central-1.amazonaws.com
+    - docker build -t 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:$CI_COMMIT_BRANCH$CI_PIPELINE_IID .
+    - docker push 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:$CI_COMMIT_BRANCH$CI_PIPELINE_IID
+
+
+
+dev_deploy:
+   only:
+     - develop
+   stage: deploy
+   tags:
+     - dev
+   script:
+     - aws ecr get-login-password --region eu-central-1 | sudo docker login --username AWS --password-stdin 895812715899.dkr.ecr.eu-central-1.amazonaws.com
+     - sudo docker stop Front && sudo docker rm Front
+     
+
+prod_deploy:
+   only:
+     - master
+   stage: deploy
+   tags:
+     - builder
+   script:
+     - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 895812715899.dkr.ecr.eu-central-1.amazonaws.
+
+
