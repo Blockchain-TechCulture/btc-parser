@@ -9,9 +9,9 @@ dev_image-build:
   tags:
     - builder
   script:
-    - aws ecr get-login-password --region eu-central-1 | buildah login --username AWS --password-stdin 895812715899.dkr.ecr.eu-central-1.amazonaws.com
-    - buildah bud -t 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:$CI_COMMIT_BRANCH$CI_PIPELINE_IID .
-    - buildah push 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:$CI_COMMIT_BRANCH$CI_PIPELINE_IID
+    - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 895812715899.dkr.ecr.eu-central-1.amazonaws.com
+    - docker build -t 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:$CI_COMMIT_BRANCH$CI_PIPELINE_IID .
+    - docker push 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:$CI_COMMIT_BRANCH$CI_PIPELINE_IID
 
 prod_image-build:
   only:
@@ -20,9 +20,9 @@ prod_image-build:
   tags:
     - builder
   script:
-    - aws ecr get-login-password --region eu-central-1 | buildah login --username AWS --password-stdin 895812715899.dkr.ecr.eu-central-1.amazonaws.com
-    - buildah bud --isolation=chroot -t 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:$CI_COMMIT_BRANCH$CI_PIPELINE_IID .
-    - buildah push 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:$CI_COMMIT_BRANCH$CI_PIPELINE_IID
+    - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 895812715899.dkr.ecr.eu-central-1.amazonaws.com
+    - docker build -t 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:$CI_COMMIT_BRANCH$CI_PIPELINE_IID .
+    - docker push 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:$CI_COMMIT_BRANCH$CI_PIPELINE_IID
 
 
 
