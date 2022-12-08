@@ -21,8 +21,8 @@ prod_image-build:
     - builder
   script:
     - aws ecr get-login-password --region eu-central-1 | buildah login --username AWS --password-stdin 895812715899.dkr.ecr.eu-central-1.amazonaws.com
-    - buildah bud -t 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:$CI_COMMIT_BRANCH$CI_PIPELINE_IID .
-    - buildah push 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:$CI_COMMIT_BRANCH$CI_PIPELINE_IID
+    - sudo buildah bud -t 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:$CI_COMMIT_BRANCH$CI_PIPELINE_IID .
+    - sudo buildah push 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:$CI_COMMIT_BRANCH$CI_PIPELINE_IID
 
 
 
