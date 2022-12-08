@@ -26,7 +26,7 @@ log_name = f'{NETWORK.lower()}_parser'
 logging.basicConfig(
     handlers=[
         logging.StreamHandler(),
-        RotatingFileHandler(BASE_DIR + f'/logs/{log_name}.log', maxBytes=20000 * 15000, backupCount=10)
+        # RotatingFileHandler(BASE_DIR + f'/logs/{log_name}.log', maxBytes=20000 * 15000, backupCount=10) # return to log in file
     ],
     level=logging.INFO,
     format='[%(asctime)s] [%(pathname)s:%(lineno)d] [%(levelname)s] - %(message)s',
