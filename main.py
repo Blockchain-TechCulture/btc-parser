@@ -1,4 +1,5 @@
 import json
+import os
 
 import requests
 import asyncio
@@ -8,20 +9,24 @@ from logging.handlers import RotatingFileHandler
 from time import sleep
 from redis import Redis
 from kafka import KafkaProducer
-from dotenv import dotenv_values
 
-
-config = dotenv_values('.env')
 
 NETWORK = 'BTC'
+KAFKA_TOPIC=os.getenv('KAFKA_TX_TOPIC')
+BASE_DIR=os.getenv('BASE_DIR')
+REDIS_HOST=os.getenv('REDIS_HOST')
+REDIS_PORT=int(os.getenv('REDIS_PORT', 6379))
+KAFKA_URLS=os.getenv('KAFKA_URL').split(',')
+TESTNET=os.getenv('TESTNET', 'False').lower() in ('true', '1', 't')
+RPC_TESTNET_URL=os.getenv('RPC_TESTNET_URL')
+RPC_PROD_URL=os.getenv('RPC_URL')
 
-KAFKA_TOPIC = config['KAFKA_TX_TOPIC']
 
 log_name = f'{NETWORK.lower()}_parser'
 logging.basicConfig(
     handlers=[
         logging.StreamHandler(),
-        RotatingFileHandler(config['BASE_DIR'] + f'/logs/{log_name}.log', maxBytes=20000 * 15000, backupCount=10)
+        RotatingFileHandler(BASE_DIR + f'/logs/{log_name}.log', maxBytes=20000 * 15000, backupCount=10)
     ],
     level=logging.INFO,
     format='[%(asctime)s] [%(pathname)s:%(lineno)d] [%(levelname)s] - %(message)s',
@@ -29,12 +34,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger('btc_parser')
 
-r = Redis(host=config['REDIS_HOST'], port=int(config['REDIS_PORT']))
-servers = config['KAFKA_URL'].split(',')
-producer = KafkaProducer(bootstrap_servers=servers, value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+r = Redis(host=REDIS_HOST, port=REDIS_PORT)
 
-network_testnet = config['TESTNET'].lower() in ('true', '1', 't')
-RPC_URL= config['RPC_TESTNET_URL'] if network_testnet else config['RPC_URL']
+producer = KafkaProducer(bootstrap_servers=KAFKA_URLS, value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+
+RPC_URL= RPC_TESTNET_URL if TESTNET else RPC_PROD_URL
 
 
 class BtcWorker:
