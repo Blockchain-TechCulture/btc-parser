@@ -7,7 +7,7 @@ import aiohttp
 import logging
 from logging.handlers import RotatingFileHandler
 from time import sleep
-from redis import Redis
+from redis import Redis, RedisCluster
 from kafka import KafkaProducer
 
 
@@ -20,7 +20,7 @@ KAFKA_URLS=os.getenv('KAFKA_URL').split(',')
 TESTNET=os.getenv('TESTNET', 'False').lower() in ('true', '1', 't')
 RPC_TESTNET_URL=os.getenv('RPC_TESTNET_URL')
 RPC_PROD_URL=os.getenv('RPC_URL')
-
+RPC_URL= RPC_TESTNET_URL if TESTNET else RPC_PROD_URL
 
 log_name = f'{NETWORK.lower()}_parser'
 logging.basicConfig(
@@ -34,11 +34,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger('btc_parser')
 
-r = Redis(host=REDIS_HOST, port=REDIS_PORT)
+# r = Redis(host=REDIS_HOST, port=REDIS_PORT)
+r = RedisCluster(host=REDIS_HOST, port=REDIS_PORT) # use this to cluster mode
 
 producer = KafkaProducer(bootstrap_servers=KAFKA_URLS, value_serializer=lambda v: json.dumps(v).encode('utf-8'))
-
-RPC_URL= RPC_TESTNET_URL if TESTNET else RPC_PROD_URL
 
 
 class BtcWorker:
