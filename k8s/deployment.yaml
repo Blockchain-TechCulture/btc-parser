@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: btc-parser
+    environment: {{ .TIER }}
+  name: btc-parser
+  namespace: bitocol
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: btc-parser
+  template:
+    metadata:
+      labels:
+        app: btc-parser
+    spec:
+      containers:
+      - image: 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:{{ .TAG }}
+        name: bitocol-btc-parser
+        envFrom:
+        - configMapRef:
+            name: btc-parser-config

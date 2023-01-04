@@ -7,7 +7,7 @@ dev_image-build:
    - develop
   stage: build
   tags:
-    - builder
+    - dev
   script:
     - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 895812715899.dkr.ecr.eu-central-1.amazonaws.com
     - docker build -t 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:$CI_COMMIT_BRANCH$CI_PIPELINE_IID .
@@ -24,8 +24,6 @@ prod_image-build:
     - docker build -t 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:$CI_COMMIT_BRANCH$CI_PIPELINE_IID .
     - docker push 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:$CI_COMMIT_BRANCH$CI_PIPELINE_IID
 
-
-
 dev_deploy:
    only:
      - develop
@@ -34,9 +32,9 @@ dev_deploy:
      - dev
    script:
      - aws ecr get-login-password --region eu-central-1 | sudo docker login --username AWS --password-stdin 895812715899.dkr.ecr.eu-central-1.amazonaws.com
-     - sudo docker stop Front && sudo docker rm Front
+     - sudo docker stop btc-parser && sudo docker rm btc-parser
+     - sudo docker run --name btc-parser -d 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:$CI_COMMIT_BRANCH$CI_PIPELINE_IID
      
-
 prod_deploy:
    only:
      - master
@@ -44,6 +42,8 @@ prod_deploy:
    tags:
      - builder
    script:
-     - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 895812715899.dkr.ecr.eu-central-1.amazonaws.
+     - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 895812715899.dkr.ecr.eu-central-1.amazonaws.com
+     - kubetpl render k8s/deployment.yaml -s TAG=$CI_COMMIT_BRANCH$CI_PIPELINE_IID -s TIER=production
+     - kubectl apply -f k8s/deployment.yaml
 
 
