@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app: btc-parser
-    environment: {{ .TIER }}
+    environment: $TIER
   name: btc-parser
   namespace: bitocol
 spec:
@@ -17,7 +17,7 @@ spec:
         app: btc-parser
     spec:
       containers:
-      - image: 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:{{ .TAG }}
+      - image: 895812715899.dkr.ecr.eu-central-1.amazonaws.com/bitocol-btc-parser:$TAG
         name: bitocol-btc-parser
         envFrom:
         - configMapRef:
