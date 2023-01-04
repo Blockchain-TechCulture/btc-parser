@@ -43,8 +43,6 @@ prod_deploy:
      - builder
    script:
      - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 895812715899.dkr.ecr.eu-central-1.amazonaws.com
-     - kubetpl render k8s/deployment.yaml -s TAG=$CI_COMMIT_BRANCH$CI_PIPELINE_IID -s TIER=production
-     - cat k8s/deployment.yaml
-     - kubectl apply -f k8s/deployment.yaml
+     - sed 's/TAG/$CI_COMMIT_BRANCH$CI_PIPELINE_IID/g' k8s/deployment.yaml | kubectl apply -f -
 
 
